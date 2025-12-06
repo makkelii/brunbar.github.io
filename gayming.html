@@ -2,7 +2,7 @@
 <html lang="fi">
 <head>
   <meta charset="UTF-8" />
-  <title>Mini Racing – GitHub Pages</title>
+  <title>Mini Racing – Gayming Edition</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <style>
     * {
@@ -35,7 +35,6 @@
       height: 100%;
     }
 
-    /* Overlayt (valikot, taso läpäisty jne.) */
     .overlay {
       position: absolute;
       inset: 0;
@@ -45,7 +44,7 @@
       justify-content: flex-start;
       gap: 0.75rem;
       padding: 1.5rem 1.2rem 1.2rem;
-      background: radial-gradient(circle at top, rgba(0,0,0,0.9), rgba(0,0,0,0.8));
+      background: radial-gradient(circle at top, rgba(0,0,0,0.9), rgba(0,0,0,0.85));
       text-align: center;
       z-index: 10;
       overflow-y: auto;
@@ -110,7 +109,6 @@
       opacity: 0.7;
     }
 
-    /* Level-valikko */
     .level-select {
       width: 100%;
       max-width: 720px;
@@ -181,7 +179,6 @@
       border-color: rgba(129,212,250,0.7);
     }
 
-    /* Car customization */
     .car-customization {
       width: 100%;
       max-width: 720px;
@@ -237,7 +234,6 @@
       box-shadow: 0 0 0 1px rgba(255,235,59,0.6);
     }
 
-    /* Quick start/button row */
     .menu-actions {
       margin-top: 0.3rem;
       display: flex;
@@ -246,7 +242,6 @@
       justify-content: center;
     }
 
-    /* Mobiiliohjaimet */
     #controls {
       position: absolute;
       inset-inline: 0;
@@ -280,7 +275,6 @@
       transform: scale(0.97);
     }
 
-    /* HUD */
     #hud {
       position: absolute;
       top: 0.7rem;
@@ -313,7 +307,6 @@
       user-select: none;
     }
 
-    /* Status overlay (taso läpi / peli ohi) */
     #status-overlay h1 {
       margin-top: 1rem;
       margin-bottom: 0.4rem;
@@ -334,9 +327,7 @@
     }
 
     @media (min-width: 768px) {
-      .overlay {
-        justify-content: flex-start;
-      }
+      .overlay { justify-content: flex-start; }
       #game-container {
         max-width: 900px;
         margin: 0 auto;
@@ -348,7 +339,6 @@
   <div id="game-container">
     <canvas id="game"></canvas>
 
-    <!-- HUD -->
     <div id="hud">
       <span id="hud-level">Taso: 1</span>
       <div id="hud-right">
@@ -359,28 +349,26 @@
       </div>
     </div>
 
-    <!-- Kosketusohjaimet -->
     <div id="controls">
       <div id="btn-left" class="control-btn">⟵</div>
       <div id="btn-right" class="control-btn">⟶</div>
     </div>
 
-    <!-- Päävalikko / tasonvalinta -->
     <div id="menu" class="overlay">
       <h1>Mini Racing</h1>
-      <p>Aja kilpaa, kerää kolikot ja läpäise kaikki tasot!</p>
-      <p class="hint">Ohjaus: nuolinäppäimet / A–D tai kosketusnapit vasen/oikea. Esc = takaisin valikkoon.</p>
+      <p>3-kaistaa, pehmeät liikkeet, kolikot & tasot. Mobiilissa kosketus, koneella nuolinäppäimet / A–D.</p>
+      <p class="hint">Esc: takaisin valikkoon. Tallennus selaimen muistiin.</p>
 
       <div class="level-select">
         <div class="section-title">Tason valinta</div>
         <div id="level-list" class="level-list"></div>
-        <p class="hint">Avaa uusia tasoja ajamalla edelliset maaliin ilman törmäystä.</p>
+        <p class="hint">Lukitut kartat avautuvat, kun ajat edellisen maaliin.</p>
       </div>
 
       <div class="car-customization">
         <div class="section-title">Auto</div>
         <div id="car-skin-list" class="car-skin-list"></div>
-        <p class="hint">Valinta tallentuu – sama auto seuraavalla kerralla.</p>
+        <p class="hint">Auton väri säilyy seuraavalla kerralla.</p>
       </div>
 
       <div class="menu-actions">
@@ -389,7 +377,6 @@
       </div>
     </div>
 
-    <!-- Taso läpäisty / peli ohi -->
     <div id="status-overlay" class="overlay hidden">
       <h1 id="status-title">Taso läpäisty!</h1>
       <p id="status-text"></p>
@@ -403,7 +390,7 @@
   </div>
 
   <script>
-    // === DOM-viittaukset ===
+    // DOM
     const canvas = document.getElementById("game");
     const ctx = canvas.getContext("2d");
 
@@ -430,18 +417,21 @@
     const btnLeft = document.getElementById("btn-left");
     const btnRight = document.getElementById("btn-right");
 
-    // === Tallennusavaimet ===
-    const STORAGE_KEY_PROGRESS = "miniRacingProgress_v1";
-    const STORAGE_KEY_CAR = "miniRacingCarSkin_v1";
+    // Storage keys (v3 = uusi, helpompi peli)
+    const STORAGE_KEY_PROGRESS = "miniRacingProgress_v3";
+    const STORAGE_KEY_CAR = "miniRacingCarSkin_v3";
     const STORAGE_KEY_AUDIO = "miniRacingAudio_v1";
 
-    // === Peli-data ===
+    // Tasot (8 karttaa)
     const levels = [
-      { id: 0, name: "Taso 1 – Kaupunkisuora", speed: 250, distance: 800, obstacleInterval: 950, difficulty: 1 },
-      { id: 1, name: "Taso 2 – Ruuhkakaista", speed: 300, distance: 1100, obstacleInterval: 800, difficulty: 2 },
-      { id: 2, name: "Taso 3 – Yömyrsky", speed: 340, distance: 1400, obstacleInterval: 680, difficulty: 3 },
-      { id: 3, name: "Taso 4 – Moottoritien haamu", speed: 380, distance: 1700, obstacleInterval: 600, difficulty: 4 },
-      { id: 4, name: "Taso 5 – Hyperkaista", speed: 430, distance: 2100, obstacleInterval: 520, difficulty: 5 }
+      { id: 0, name: "Taso 1 – Lämppäri",            speed: 170, distance: 600,  obstacleInterval: 1300, coinInterval: 1100, difficulty: 1 },
+      { id: 1, name: "Taso 2 – Kaupunkisuora",       speed: 190, distance: 900,  obstacleInterval: 1200, coinInterval: 1000, difficulty: 2 },
+      { id: 2, name: "Taso 3 – Ruuhkakaista",        speed: 215, distance: 1100, obstacleInterval: 1100, coinInterval: 950,  difficulty: 3 },
+      { id: 3, name: "Taso 4 – Yömyrsky",            speed: 240, distance: 1300, obstacleInterval: 1000, coinInterval: 900,  difficulty: 4 },
+      { id: 4, name: "Taso 5 – Moottoritien haamu",  speed: 265, distance: 1500, obstacleInterval: 930,  coinInterval: 850,  difficulty: 5 },
+      { id: 5, name: "Taso 6 – Neon-bulevardi",      speed: 290, distance: 1800, obstacleInterval: 880,  coinInterval: 800,  difficulty: 6 },
+      { id: 6, name: "Taso 7 – Hyperkaista",         speed: 320, distance: 2100, obstacleInterval: 830,  coinInterval: 750,  difficulty: 7 },
+      { id: 7, name: "Taso 8 – Viimeinen sprintti",  speed: 350, distance: 2400, obstacleInterval: 780,  coinInterval: 720,  difficulty: 8 }
     ];
 
     const carSkins = [
@@ -454,8 +444,8 @@
 
     let progress = {
       highestUnlocked: 0,
-      bestTimes: {},   // { levelId: seconds }
-      bestScores: {}   // { levelId: score }
+      bestTimes: {},
+      bestScores: {}
     };
 
     let currentCarSkinId = "neon";
@@ -463,17 +453,21 @@
     let gameState = "menu"; // menu, playing, levelComplete, gameOver, finished
     let currentLevelIndex = 0;
 
+    const road = {
+      x: 0,
+      width: 0,
+      lanes: 3,
+      laneWidth: 0
+    };
+
     const player = {
       x: 0,
       y: 0,
       width: 40,
       height: 70,
-      speedX: 260
-    };
-
-    const road = {
-      x: 0,
-      width: 0
+      lane: 1,
+      targetLane: 1,
+      moveSpeed: 900 // px/s sivuttaisliikkeen maksimi
     };
 
     let obstacles = [];
@@ -488,10 +482,10 @@
     let score = 0;
     const COIN_VALUE = 100;
 
-    let inputLeft = false;
-    let inputRight = false;
+    let inputLeftActive = false;
+    let inputRightActive = false;
 
-    // === Audio ===
+    // Audio
     let audioEnabled = true;
     let audioCtx = null;
     let masterGain = null;
@@ -502,12 +496,8 @@
     function loadAudioSetting() {
       try {
         const v = localStorage.getItem(STORAGE_KEY_AUDIO);
-        if (v === "0") {
-          audioEnabled = false;
-        } else {
-          audioEnabled = true;
-        }
-      } catch (e) {
+        audioEnabled = v === "0" ? false : true;
+      } catch {
         audioEnabled = true;
       }
     }
@@ -515,7 +505,7 @@
     function saveAudioSetting() {
       try {
         localStorage.setItem(STORAGE_KEY_AUDIO, audioEnabled ? "1" : "0");
-      } catch (e) {}
+      } catch {}
     }
 
     function updateAudioHUD() {
@@ -525,10 +515,10 @@
     function initAudioContext() {
       if (!audioEnabled) return;
       if (audioCtx) return;
-      const AudioContext = window.AudioContext || window.webkitAudioContext;
-      if (!AudioContext) return;
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
 
-      audioCtx = new AudioContext();
+      audioCtx = new AC();
       masterGain = audioCtx.createGain();
       masterGain.gain.value = 0.7;
       masterGain.connect(audioCtx.destination);
@@ -554,7 +544,7 @@
 
       const now = audioCtx.currentTime;
       engineGain.gain.setValueAtTime(0.0, now);
-      engineGain.gain.linearRampToValueAtTime(0.25, now + 0.5);
+      engineGain.gain.linearRampToValueAtTime(0.22, now + 0.4);
 
       engineOsc.start();
     }
@@ -563,15 +553,15 @@
       if (!audioCtx || !engineOsc) return;
       const now = audioCtx.currentTime;
       engineGain.gain.cancelScheduledValues(now);
-      engineGain.gain.setTargetAtTime(0.0, now, 0.1);
+      engineGain.gain.setTargetAtTime(0.0, now, 0.08);
       engineOsc.stop(now + 0.15);
       engineOsc = null;
     }
 
     function updateEnginePitch(level) {
       if (!audioEnabled || !audioCtx || !engineOsc) return;
-      const base = 70 + level.speed * 0.2;
-      const steerBoost = (inputLeft || inputRight) ? 40 : 0;
+      const base = 60 + level.speed * 0.15;
+      const steerBoost = (inputLeftActive || inputRightActive) ? 30 : 0;
       const freq = base + steerBoost;
       engineOsc.frequency.setTargetAtTime(freq, audioCtx.currentTime, 0.05);
     }
@@ -580,16 +570,13 @@
       if (!audioEnabled) return;
       initAudioContext();
       if (!audioCtx) return;
-
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.type = "sine";
       osc.frequency.value = freq;
       gain.gain.value = volume;
-
       osc.connect(gain);
       gain.connect(sfxGain || masterGain);
-
       const now = audioCtx.currentTime;
       osc.start(now);
       gain.gain.setValueAtTime(volume, now);
@@ -597,17 +584,12 @@
       osc.stop(now + duration + 0.02);
     }
 
-    function playCoinSound() {
-      playBeep(880, 0.12, 0.5);
-    }
-
-    function playClickSound() {
-      playBeep(420, 0.08, 0.3);
-    }
+    function playCoinSound() { playBeep(880, 0.12, 0.5); }
+    function playClickSound() { playBeep(420, 0.08, 0.3); }
 
     function playWinSound() {
-      playBeep(1320, 0.2, 0.5);
-      setTimeout(() => playBeep(1760, 0.25, 0.4), 80);
+      playBeep(1320, 0.18, 0.5);
+      setTimeout(() => playBeep(1760, 0.22, 0.4), 80);
     }
 
     function playCrashSound() {
@@ -624,29 +606,28 @@
       const now = audioCtx.currentTime;
       osc.start(now);
       gain.gain.setValueAtTime(0.7, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
-      osc.frequency.exponentialRampToValueAtTime(20, now + 0.3);
-      osc.stop(now + 0.35);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+      osc.frequency.exponentialRampToValueAtTime(20, now + 0.25);
+      osc.stop(now + 0.3);
     }
 
-    // === Tallennus (progress + auto) ===
+    // Storage
     function loadProgress() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY_PROGRESS);
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          if (typeof parsed.highestUnlocked === "number") {
-            progress.highestUnlocked = parsed.highestUnlocked;
-          }
-          if (parsed.bestTimes && typeof parsed.bestTimes === "object") {
-            progress.bestTimes = parsed.bestTimes;
-          }
-          if (parsed.bestScores && typeof parsed.bestScores === "object") {
-            progress.bestScores = parsed.bestScores;
-          }
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        if (typeof parsed.highestUnlocked === "number") {
+          progress.highestUnlocked = parsed.highestUnlocked;
+        }
+        if (parsed.bestTimes && typeof parsed.bestTimes === "object") {
+          progress.bestTimes = parsed.bestTimes;
+        }
+        if (parsed.bestScores && typeof parsed.bestScores === "object") {
+          progress.bestScores = parsed.bestScores;
         }
       } catch (e) {
-        console.warn("Ei voitu lukea progressia localStoragesta", e);
+        console.warn("Progress load fail", e);
       }
     }
 
@@ -654,27 +635,21 @@
       try {
         localStorage.setItem(STORAGE_KEY_PROGRESS, JSON.stringify(progress));
       } catch (e) {
-        console.warn("Ei voitu tallentaa progressia", e);
+        console.warn("Progress save fail", e);
       }
     }
 
     function loadCarSkin() {
       try {
         const id = localStorage.getItem(STORAGE_KEY_CAR);
-        if (id && carSkins.some(s => s.id === id)) {
-          currentCarSkinId = id;
-        }
-      } catch (e) {
-        console.warn("Ei voitu lukea auton ulkoasua", e);
-      }
+        if (id && carSkins.some(s => s.id === id)) currentCarSkinId = id;
+      } catch {}
     }
 
     function saveCarSkin() {
       try {
         localStorage.setItem(STORAGE_KEY_CAR, currentCarSkinId);
-      } catch (e) {
-        console.warn("Ei voitu tallentaa auton ulkoasua", e);
-      }
+      } catch {}
     }
 
     function getCurrentCarSkin() {
@@ -683,12 +658,11 @@
 
     function formatTime(seconds) {
       if (!isFinite(seconds)) return "–";
-      const ms = Math.round(seconds * 100); // 1/100 s
+      const ms = Math.round(seconds * 100);
       const totalSeconds = Math.floor(ms / 100);
       const minutes = Math.floor(totalSeconds / 60);
       const secs = totalSeconds % 60;
       const hundredths = ms % 100;
-
       if (minutes > 0) {
         return `${minutes}:${secs.toString().padStart(2, "0")}.${hundredths.toString().padStart(2, "0")} min`;
       } else {
@@ -696,25 +670,33 @@
       }
     }
 
-    // === Layout / canvas ===
+    // Layout
     function resizeCanvas() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-
       const margin = Math.max(canvas.width * 0.12, 40);
       road.x = margin;
       road.width = canvas.width - margin * 2;
-
-      player.width = road.width * 0.17;
-      player.height = player.width * 1.7;
-      player.x = road.x + road.width / 2 - player.width / 2;
+      road.laneWidth = road.width / road.lanes;
+      const baseWidth = road.laneWidth * 0.38;
+      player.width = baseWidth;
+      player.height = baseWidth * 1.8;
       player.y = canvas.height - player.height - canvas.height * 0.12;
+      updatePlayerTargetX();
+      player.x = player.targetX;
+    }
+
+    function laneCenterX(laneIndex) {
+      return road.x + road.laneWidth * (laneIndex + 0.5);
+    }
+
+    function updatePlayerTargetX() {
+      player.targetX = laneCenterX(player.targetLane) - player.width / 2;
     }
 
     window.addEventListener("resize", resizeCanvas);
     resizeCanvas();
 
-    // === Tason reset / aloitus ===
     function updateScoreHUD() {
       hudScore.textContent = `Pisteet: ${score}`;
     }
@@ -730,15 +712,15 @@
       coins = [];
       coinTimer = 0;
       score = 0;
+      player.lane = 1;
+      player.targetLane = 1;
+      updatePlayerTargetX();
+      player.x = player.targetX;
 
       hudLevel.textContent = `Taso: ${index + 1}`;
       hudDistance.textContent = `Matkaa maaliin: ${Math.ceil(distanceLeft)} m`;
       hudTime.textContent = `Aika: 0.0 s`;
       updateScoreHUD();
-
-      player.x = road.x + road.width / 2 - player.width / 2;
-      player.y = canvas.height - player.height - canvas.height * 0.12;
-
       updateLevelMenuUI();
     }
 
@@ -751,33 +733,28 @@
       startEngineSound();
     }
 
-    function unlockNextLevelIfNeeded(levelIndex) {
-      const level = levels[levelIndex];
+    function unlockNextLevelAndUpdateRecords() {
+      const level = levels[currentLevelIndex];
       const levelId = level.id.toString();
+      const oldBestTime = progress.bestTimes[levelId];
+      const oldBestScore = progress.bestScores[levelId];
 
-      // Päivitä paras aika
-      const prevBestTime = progress.bestTimes[levelId];
-      if (prevBestTime === undefined || elapsedTime < prevBestTime) {
+      if (oldBestTime === undefined || elapsedTime < oldBestTime) {
         progress.bestTimes[levelId] = elapsedTime;
       }
-
-      // Päivitä paras pistemäärä
-      const prevBestScore = progress.bestScores[levelId];
-      if (prevBestScore === undefined || score > prevBestScore) {
+      if (oldBestScore === undefined || score > oldBestScore) {
         progress.bestScores[levelId] = score;
       }
 
-      // Avaa seuraava taso
-      if (levelIndex < levels.length - 1) {
-        if (progress.highestUnlocked < levelIndex + 1) {
-          progress.highestUnlocked = levelIndex + 1;
+      if (currentLevelIndex < levels.length - 1) {
+        if (progress.highestUnlocked < currentLevelIndex + 1) {
+          progress.highestUnlocked = currentLevelIndex + 1;
         }
       }
 
       saveProgress();
     }
 
-    // === Status overlay (taso läpäisty / peli ohi) ===
     function showStatusOverlay(type) {
       statusOverlay.classList.remove("hidden");
       btnSecondary.classList.add("hidden");
@@ -788,41 +765,39 @@
       const levelId = level.id.toString();
       const bestTime = progress.bestTimes[levelId];
       const bestScore = progress.bestScores[levelId];
-      const currentTimeFormatted = formatTime(elapsedTime);
+      const currentTimeStr = formatTime(elapsedTime);
 
       if (type === "levelComplete") {
         gameState = "levelComplete";
-        statusTitle.textContent = "Taso läpäisty!";
-        unlockNextLevelIfNeeded(currentLevelIndex);
+        unlockNextLevelAndUpdateRecords();
         playWinSound();
 
-        const newBestTime = bestTime !== undefined && elapsedTime <= bestTime;
-        const newBestScore = bestScore !== undefined && score >= bestScore;
+        const newBestTime = bestTime === undefined || elapsedTime < bestTime;
+        const newBestScore = bestScore === undefined || score > bestScore;
 
-        let timeInfo;
         const updatedBestTime = progress.bestTimes[levelId];
-        const updatedBestTimeFormatted = formatTime(updatedBestTime);
-
-        if (bestTime === undefined) {
-          timeInfo = `Aikasi: ${currentTimeFormatted}. Tämä on ensimmäinen aikasi tällä tasolla.`;
-        } else if (elapsedTime < bestTime) {
-          timeInfo = `Uusi aikaennätys: ${currentTimeFormatted} (vanha: ${formatTime(bestTime)}).`;
-        } else {
-          timeInfo = `Aikasi: ${currentTimeFormatted}. Paras aikasi: ${formatTime(bestTime)}.`;
-        }
-
-        let scoreInfo;
         const updatedBestScore = progress.bestScores[levelId];
 
-        if (bestScore === undefined) {
-          scoreInfo = ` Pisteet: ${score}. Tämä on ensimmäinen pistetuloksesi tällä tasolla.`;
-        } else if (score > bestScore) {
-          scoreInfo = ` Uusi piste-ennätys: ${score} (vanha: ${bestScore}).`;
+        let s = `Maali! Aikasi: ${currentTimeStr}. `;
+        if (newBestTime && bestTime !== undefined) {
+          s += `Uusi aikaennätys (vanha ${formatTime(bestTime)}). `;
+        } else if (bestTime === undefined) {
+          s += `Ensimmäinen aika tällä tasolla. `;
         } else {
-          scoreInfo = ` Pisteet: ${score}. Paras pistemääräsi: ${bestScore}.`;
+          s += `Paras aikasi: ${formatTime(bestTime)}. `;
         }
 
-        statusText.textContent = timeInfo + scoreInfo;
+        s += `Pisteet: ${score}. `;
+        if (newBestScore && bestScore !== undefined) {
+          s += `Uusi piste-ennätys (vanha ${bestScore}).`;
+        } else if (bestScore === undefined) {
+          s += `Ensimmäinen pistetulos tällä tasolla.`;
+        } else {
+          s += `Paras pistemääräsi: ${bestScore}.`;
+        }
+
+        statusTitle.textContent = "Taso läpäisty!";
+        statusText.textContent = s;
 
         if (currentLevelIndex < levels.length - 1) {
           statusExtra.textContent = `Seuraavaksi: ${levels[currentLevelIndex + 1].name}`;
@@ -840,21 +815,18 @@
           };
         } else {
           gameState = "finished";
-          statusExtra.textContent = "Läpäisit kaikki tasot – mestari kuski! 🚗💨";
+          statusExtra.textContent = "Läpäisit kaikki kartat – mestari kuski!";
           btnPrimary.textContent = "Pelaa alusta";
           btnPrimary.onclick = () => {
             statusOverlay.classList.add("hidden");
             startLevel(0);
           };
         }
-
       } else if (type === "gameOver") {
         gameState = "gameOver";
-        statusTitle.textContent = "Törmäys!";
-        statusText.textContent = "Auto romuna – kokeile uudestaan sama taso.";
-        statusExtra.textContent = `Viimeisin aikasi ennen törmäystä: ${currentTimeFormatted}, pisteet: ${score}.`;
         playCrashSound();
-
+        statusTitle.textContent = "Törmäys!";
+        statusText.textContent = `Auto romuna. Aikasi ennen törmäystä: ${currentTimeStr}, pisteet: ${score}.`;
         btnPrimary.textContent = "Yritä uudestaan";
         btnPrimary.onclick = () => {
           statusOverlay.classList.add("hidden");
@@ -882,112 +854,106 @@
 
     function spawnObstacle() {
       const level = levels[currentLevelIndex];
-      const laneCount = 3;
-      const laneWidth = road.width / laneCount;
-      const lane = Math.floor(Math.random() * laneCount);
-
-      const obsWidth = laneWidth * 0.6;
-      const obsHeight = obsWidth * 1.7;
-      const x = road.x + lane * laneWidth + laneWidth / 2 - obsWidth / 2;
-      const y = -obsWidth - 20;
-
-      const speedVariation = 0.85 + Math.random() * 0.3;
+      const lane = Math.floor(Math.random() * road.lanes);
+      const laneCenter = laneCenterX(lane);
+      const width = road.laneWidth * 0.34;
+      const height = width * 1.7;
 
       obstacles.push({
-        x,
-        y,
-        width: obsWidth,
-        height: obsHeight,
-        speed: level.speed * speedVariation
+        x: laneCenter - width / 2,
+        y: -height - 20,
+        width,
+        height,
+        speed: level.speed * (0.9 + Math.random() * 0.25)
       });
     }
 
     function spawnCoin() {
       const level = levels[currentLevelIndex];
-      const laneCount = 3;
-      const laneWidth = road.width / laneCount;
-      const lane = Math.floor(Math.random() * laneCount);
-
-      const size = laneWidth * 0.35;
-      const x = road.x + lane * laneWidth + laneWidth / 2 - size / 2;
-      const y = -size - 10;
+      const lane = Math.floor(Math.random() * road.lanes);
+      const laneCenter = laneCenterX(lane);
+      const size = road.laneWidth * 0.28;
 
       coins.push({
-        x,
-        y,
+        x: laneCenter - size / 2,
+        y: -size - 10,
         width: size,
         height: size,
         speed: level.speed * 0.9
       });
     }
 
-    // === Peli-update ===
     function update(dt) {
       if (gameState !== "playing") return;
-
       const level = levels[currentLevelIndex];
 
-      // Pelaajan liike
-      if (inputLeft) {
-        player.x -= player.speedX * dt;
-      }
-      if (inputRight) {
-        player.x += player.speedX * dt;
-      }
-
-      // Rajat
-      const margin = road.width * 0.02;
-      if (player.x < road.x + margin) {
-        player.x = road.x + margin;
-      }
-      if (player.x + player.width > road.x + road.width - margin) {
-        player.x = road.x + road.width - margin - player.width;
+      // Pelaajan pehmeä lane-liike
+      const dx = player.targetX - player.x;
+      const maxStep = player.moveSpeed * dt;
+      if (Math.abs(dx) <= maxStep) {
+        player.x = player.targetX;
+      } else {
+        player.x += Math.sign(dx) * maxStep;
       }
 
-      // Tien rullaus & aika
       scrollOffset += level.speed * dt;
       elapsedTime += dt;
       hudTime.textContent = `Aika: ${formatTime(elapsedTime)}`;
 
-      // Esteiden päivitys
       obstacleTimer -= dt * 1000;
       if (obstacleTimer <= 0) {
         spawnObstacle();
-        obstacleTimer = level.obstacleInterval * (0.6 + Math.random() * 0.8);
+        obstacleTimer = level.obstacleInterval * (0.85 + Math.random() * 0.4);
       }
+
+      coinTimer -= dt * 1000;
+      if (coinTimer <= 0) {
+        spawnCoin();
+        coinTimer = level.coinInterval * (0.8 + Math.random() * 0.5);
+      }
+
+      // Päivitä esteet
+      const playerHit = {
+        x: player.x + player.width * 0.15,
+        y: player.y + player.height * 0.1,
+        width: player.width * 0.7,
+        height: player.height * 0.8
+      };
 
       for (let i = obstacles.length - 1; i >= 0; i--) {
         const o = obstacles[i];
         o.y += o.speed * dt;
-
-        if (o.y > canvas.height + 50) {
+        if (o.y > canvas.height + 60) {
           obstacles.splice(i, 1);
           continue;
         }
-
-        if (rectsOverlap(player, o)) {
+        const oHit = {
+          x: o.x + o.width * 0.1,
+          y: o.y + o.height * 0.1,
+          width: o.width * 0.8,
+          height: o.height * 0.8
+        };
+        if (rectsOverlap(playerHit, oHit)) {
           showStatusOverlay("gameOver");
           return;
         }
       }
 
-      // Kolikot
-      coinTimer -= dt * 1000;
-      if (coinTimer <= 0) {
-        spawnCoin();
-        coinTimer = 850 * (0.8 + Math.random() * 0.9);
-      }
-
+      // Päivitä kolikot
       for (let i = coins.length - 1; i >= 0; i--) {
         const c = coins[i];
         c.y += c.speed * dt;
-
         if (c.y > canvas.height + 40) {
           coins.splice(i, 1);
           continue;
         }
-
-        if (rectsOverlap(player, c)) {
+        const cHit = {
+          x: c.x + c.width * 0.2,
+          y: c.y + c.height * 0.2,
+          width: c.width * 0.6,
+          height: c.height * 0.6
+        };
+        if (rectsOverlap(playerHit, cHit)) {
           score += COIN_VALUE;
           updateScoreHUD();
           playCoinSound();
@@ -995,7 +961,7 @@
         }
       }
 
-      // Matkan väheneminen
+      // Matka
       const distanceStep = level.speed * dt * 0.6;
       distanceLeft -= distanceStep;
       if (distanceLeft < 0) distanceLeft = 0;
@@ -1008,19 +974,14 @@
       updateEnginePitch(level);
     }
 
-    // === Piirto ===
     function drawRoad() {
       const h = canvas.height;
-
-      // Tausta
-      const roadGradient = ctx.createLinearGradient(0, 0, 0, h);
-      roadGradient.addColorStop(0, "#20232a");
-      roadGradient.addColorStop(1, "#13151a");
-
-      ctx.fillStyle = roadGradient;
+      const grad = ctx.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, "#20232a");
+      grad.addColorStop(1, "#13151a");
+      ctx.fillStyle = grad;
       ctx.fillRect(road.x, 0, road.width, h);
 
-      // Reunat
       ctx.strokeStyle = "#555";
       ctx.lineWidth = 4;
       ctx.beginPath();
@@ -1030,16 +991,14 @@
       ctx.lineTo(road.x + road.width, h);
       ctx.stroke();
 
-      // Keskiviivat
       const dashHeight = 30;
       const gap = 30;
-      const laneWidth = road.width / 3;
       ctx.strokeStyle = "#eee";
       ctx.lineWidth = 4;
       ctx.setLineDash([dashHeight, gap]);
 
-      for (let lane = 1; lane < 3; lane++) {
-        const x = road.x + laneWidth * lane;
+      for (let lane = 1; lane < road.lanes; lane++) {
+        const x = road.x + road.laneWidth * lane;
         ctx.beginPath();
         const offset = scrollOffset % (dashHeight + gap);
         ctx.moveTo(x, -dashHeight + offset);
@@ -1050,18 +1009,15 @@
       ctx.setLineDash([]);
     }
 
-    function drawCar(car, colorBody, colorDetails) {
+    function drawCar(car, bodyColor, detailColor) {
       ctx.save();
       ctx.translate(car.x + car.width / 2, car.y + car.height / 2);
-
       const bw = car.width;
       const bh = car.height;
 
-      // Auto
-      ctx.fillStyle = colorBody;
+      ctx.fillStyle = bodyColor;
       ctx.strokeStyle = "#000";
       ctx.lineWidth = 2;
-
       if (ctx.roundRect) {
         ctx.beginPath();
         ctx.roundRect(-bw / 2, -bh / 2, bw, bh, 8);
@@ -1072,24 +1028,20 @@
         ctx.strokeRect(-bw / 2, -bh / 2, bw, bh);
       }
 
-      // Ikkunat
-      ctx.fillStyle = "rgba(10, 20, 30, 0.9)";
+      ctx.fillStyle = "rgba(10,20,30,0.9)";
       const winH = bh * 0.28;
       ctx.fillRect(-bw * 0.35, -winH / 2, bw * 0.7, winH);
 
-      // Etuvalot
-      ctx.fillStyle = colorDetails;
+      ctx.fillStyle = detailColor;
       const lightW = bw * 0.22;
       const lightH = 6;
       ctx.fillRect(-bw / 2 + 4, -bh / 2 + 6, lightW, lightH);
       ctx.fillRect(bw / 2 - lightW - 4, -bh / 2 + 6, lightW, lightH);
 
-      // Takavalot
       ctx.fillStyle = "#ff1744";
       ctx.fillRect(-bw / 2 + 4, bh / 2 - lightH - 6, lightW, lightH);
       ctx.fillRect(bw / 2 - lightW - 4, bh / 2 - lightH - 6, lightW, lightH);
 
-      // Varjostus
       const grad = ctx.createLinearGradient(-bw / 2, 0, bw / 2, 0);
       grad.addColorStop(0, "rgba(255,255,255,0.1)");
       grad.addColorStop(0.5, "rgba(255,255,255,0)");
@@ -1104,17 +1056,14 @@
       const cx = c.x + c.width / 2;
       const cy = c.y + c.height / 2;
       const r = c.width / 2;
-
       const grad = ctx.createRadialGradient(cx - r * 0.3, cy - r * 0.3, r * 0.1, cx, cy, r);
       grad.addColorStop(0, "#fff9c4");
       grad.addColorStop(0.4, "#ffeb3b");
       grad.addColorStop(1, "#f9a825");
-
       ctx.fillStyle = grad;
       ctx.beginPath();
       ctx.arc(cx, cy, r, 0, Math.PI * 2);
       ctx.fill();
-
       ctx.strokeStyle = "rgba(255,255,255,0.7)";
       ctx.lineWidth = 2;
       ctx.beginPath();
@@ -1124,24 +1073,14 @@
 
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
       drawRoad();
 
-      // Kolikot
-      for (const c of coins) {
-        drawCoin(c);
-      }
+      for (const c of coins) drawCoin(c);
+      for (const o of obstacles) drawCar(o, "#f44336", "#ffc107");
 
-      // Esteet
-      for (const o of obstacles) {
-        drawCar(o, "#f44336", "#ffc107");
-      }
-
-      // Pelaaja
       const skin = getCurrentCarSkin();
       drawCar(player, skin.body, skin.details);
 
-      // Tummennus alareunaan
       const grad = ctx.createLinearGradient(0, canvas.height * 0.7, 0, canvas.height);
       grad.addColorStop(0, "rgba(0,0,0,0)");
       grad.addColorStop(1, "rgba(0,0,0,0.5)");
@@ -1149,27 +1088,25 @@
       ctx.fillRect(0, canvas.height * 0.7, canvas.width, canvas.height * 0.3);
     }
 
-    // === Pelisilmukka ===
-    function loop(timestamp) {
-      if (!lastTime) lastTime = timestamp;
-      const dt = Math.min((timestamp - lastTime) / 1000, 0.035);
-      lastTime = timestamp;
-
+    function loop(ts) {
+      if (!lastTime) lastTime = ts;
+      const dt = Math.min((ts - lastTime) / 1000, 0.035);
+      lastTime = ts;
       update(dt);
       draw();
-
       requestAnimationFrame(loop);
     }
 
-    // === Ohjaimet ===
+    // PC-ohjaus: lane step per painallus
     window.addEventListener("keydown", (e) => {
+      if (e.repeat) return;
       if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") {
-        inputLeft = true;
-      }
-      if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") {
-        inputRight = true;
-      }
-      if (e.key === "Escape") {
+        moveLane(-1);
+        inputLeftActive = true;
+      } else if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") {
+        moveLane(1);
+        inputRightActive = true;
+      } else if (e.key === "Escape") {
         if (gameState === "playing") {
           gameState = "menu";
           menuOverlay.classList.remove("hidden");
@@ -1181,37 +1118,33 @@
 
     window.addEventListener("keyup", (e) => {
       if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") {
-        inputLeft = false;
-      }
-      if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") {
-        inputRight = false;
+        inputLeftActive = false;
+      } else if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") {
+        inputRightActive = false;
       }
     });
 
-    function attachTouch(btn, setLeft, setRight) {
-      const start = (e) => {
-        e.preventDefault();
-        if (setLeft !== undefined) inputLeft = setLeft;
-        if (setRight !== undefined) inputRight = setRight;
-      };
-      const end = (e) => {
-        e.preventDefault();
-        if (setLeft) inputLeft = false;
-        if (setRight) inputRight = false;
-      };
-
-      btn.addEventListener("touchstart", start);
-      btn.addEventListener("touchend", end);
-      btn.addEventListener("touchcancel", end);
-      btn.addEventListener("mousedown", start);
-      btn.addEventListener("mouseup", end);
-      btn.addEventListener("mouseleave", end);
+    function moveLane(delta) {
+      const newLane = Math.max(0, Math.min(road.lanes - 1, player.targetLane + delta));
+      if (newLane !== player.targetLane) {
+        player.targetLane = newLane;
+        updatePlayerTargetX();
+        playClickSound();
+      }
     }
 
-    attachTouch(btnLeft, true, undefined);
-    attachTouch(btnRight, undefined, true);
+    function attachTapButton(btn, dir) {
+      const onPress = (e) => {
+        e.preventDefault();
+        moveLane(dir);
+      };
+      btn.addEventListener("touchstart", onPress);
+      btn.addEventListener("mousedown", onPress);
+    }
 
-    // Äänen on/off HUDista
+    attachTapButton(btnLeft, -1);
+    attachTapButton(btnRight, 1);
+
     hudAudio.addEventListener("click", () => {
       audioEnabled = !audioEnabled;
       saveAudioSetting();
@@ -1224,17 +1157,13 @@
       }
     });
 
-    // === UI – tasonvalinta & auton valinta ===
     function updateLevelMenuUI() {
       levelListEl.innerHTML = "";
       const highest = progress.highestUnlocked;
-
       levels.forEach((level, index) => {
         const card = document.createElement("div");
         const locked = index > highest;
-
         card.className = "level-card" + (locked ? " locked" : "");
-
         const nameEl = document.createElement("div");
         nameEl.className = "level-name";
         nameEl.textContent = level.name;
@@ -1242,25 +1171,23 @@
 
         const metaEl = document.createElement("div");
         metaEl.className = "level-meta";
-        const stars = "★".repeat(level.difficulty) + "☆".repeat(5 - level.difficulty);
+        const maxStars = 5;
+        const normalized = Math.min(maxStars, Math.max(1, Math.round(level.difficulty * maxStars / levels.length)));
+        const stars = "★".repeat(normalized) + "☆".repeat(maxStars - normalized);
         metaEl.textContent = `Vaikeus: ${stars}`;
         card.appendChild(metaEl);
 
-        const bestTimeVal = progress.bestTimes[level.id.toString()];
-        const bestTimeEl = document.createElement("div");
-        bestTimeEl.className = "level-best-time";
-        bestTimeEl.textContent = bestTimeVal !== undefined
-          ? `Paras aika: ${formatTime(bestTimeVal)}`
-          : "Paras aika: –";
-        card.appendChild(bestTimeEl);
+        const timeVal = progress.bestTimes[level.id.toString()];
+        const timeEl = document.createElement("div");
+        timeEl.className = "level-best-time";
+        timeEl.textContent = timeVal !== undefined ? `Paras aika: ${formatTime(timeVal)}` : "Paras aika: –";
+        card.appendChild(timeEl);
 
-        const bestScoreVal = progress.bestScores[level.id.toString()];
-        const bestScoreEl = document.createElement("div");
-        bestScoreEl.className = "level-best-score";
-        bestScoreEl.textContent = bestScoreVal !== undefined
-          ? `Paras pisteet: ${bestScoreVal}`
-          : "Paras pisteet: –";
-        card.appendChild(bestScoreEl);
+        const scoreVal = progress.bestScores[level.id.toString()];
+        const scoreEl = document.createElement("div");
+        scoreEl.className = "level-best-score";
+        scoreEl.textContent = scoreVal !== undefined ? `Paras pisteet: ${scoreVal}` : "Paras pisteet: –";
+        card.appendChild(scoreEl);
 
         const badge = document.createElement("div");
         badge.className = "level-badge";
@@ -1289,57 +1216,48 @@
 
     function buildCarSkinUI() {
       carSkinListEl.innerHTML = "";
-
       carSkins.forEach((skin) => {
-        const wrapper = document.createElement("div");
-        wrapper.className = "car-skin";
-        if (skin.id === currentCarSkinId) {
-          wrapper.classList.add("selected");
-        }
+        const wrap = document.createElement("div");
+        wrap.className = "car-skin";
+        if (skin.id === currentCarSkinId) wrap.classList.add("selected");
 
-        const preview = document.createElement("div");
-        preview.className = "car-skin-preview";
-
+        const prev = document.createElement("div");
+        prev.className = "car-skin-preview";
         const body = document.createElement("div");
         body.className = "car-skin-preview-body";
         body.style.background = skin.body;
-
-        const details = document.createElement("div");
-        details.className = "car-skin-preview-details";
-        details.style.background = skin.details;
-
-        preview.appendChild(body);
-        preview.appendChild(details);
+        const det = document.createElement("div");
+        det.className = "car-skin-preview-details";
+        det.style.background = skin.details;
+        prev.appendChild(body);
+        prev.appendChild(det);
 
         const label = document.createElement("div");
         label.textContent = skin.name;
 
-        wrapper.appendChild(preview);
-        wrapper.appendChild(label);
+        wrap.appendChild(prev);
+        wrap.appendChild(label);
 
-        wrapper.addEventListener("click", () => {
+        wrap.addEventListener("click", () => {
           currentCarSkinId = skin.id;
           saveCarSkin();
           playClickSound();
           buildCarSkinUI();
         });
 
-        carSkinListEl.appendChild(wrapper);
+        carSkinListEl.appendChild(wrap);
       });
     }
 
-    // === Valikon napit ===
     btnQuickStart.addEventListener("click", () => {
       const highest = progress.highestUnlocked;
-      let indexToStart = currentLevelIndex;
-      if (indexToStart > highest) {
-        indexToStart = highest;
-      }
-      startLevel(indexToStart);
+      let idx = currentLevelIndex;
+      if (idx > highest) idx = highest;
+      startLevel(idx);
     });
 
     btnResetProgress.addEventListener("click", () => {
-      if (confirm("Haluatko varmasti nollata edistymisen ja ajat?")) {
+      if (confirm("Haluatko varmasti nollata edistymisen, ajat ja pisteet?")) {
         progress = { highestUnlocked: 0, bestTimes: {}, bestScores: {} };
         saveProgress();
         playClickSound();
@@ -1347,12 +1265,6 @@
       }
     });
 
-    menuOverlay.addEventListener("click", (e) => {
-      // Estetään vahingossa klikkaus taustasta
-      e.stopPropagation();
-    });
-
-    // === Init ===
     function init() {
       loadAudioSetting();
       updateAudioHUD();
@@ -1360,11 +1272,9 @@
       loadCarSkin();
       buildCarSkinUI();
       updateLevelMenuUI();
-
       if (currentLevelIndex > progress.highestUnlocked) {
         currentLevelIndex = progress.highestUnlocked;
       }
-
       resetLevel(currentLevelIndex);
       requestAnimationFrame(loop);
     }
