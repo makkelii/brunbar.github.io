@@ -1,150 +1,123 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fi">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Brunbar</title>
-
-  <!-- Faviconit -->
-  <link rel="icon" href="/favicon.ico" sizes="any">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-  <meta name="theme-color" content="#3a006b">
-
-  <!-- Sivun kuvaus -->
-  <meta name="description" content="Brunbar – yhteystiedot" />
-
-  <!-- Kaikki sivun CSS yhdessä lohkossa -->
-  <style>
-    :root{
-      --purple: #3a006b;               /* Royal Purple */
-      --gold:   #d4af37;               /* Gold */
-      --gold-weak: rgba(212,175,55,.25);
-      --gold-wash: rgba(212,175,55,.06);
-    }
-
-    html, body { height: 100%; }
-    body{
-      margin: 0;
-      font-family: ui-serif, Georgia, "Times New Roman", Times, serif;
-      background: var(--purple);
-      color: var(--gold);
-      display: grid;
-      place-items: center;
-      text-rendering: optimizeLegibility;
-      position: relative;
-    }
-
-    .wrap{ width: min(92ch, 92vw); }
-
-    .top-btn {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      background: var(--gold);
-      color: var(--purple);
-      padding: 0.7rem 1.2rem;
-      border-radius: 8px;
-      font-weight: 700;
-      text-decoration: none;
-      box-shadow: 0 2px 6px rgba(0,0,0,.25);
-    }
-    .top-btn:hover{ filter: brightness(1.05); }
-
-    .card {
-      text-align: center;
-      padding: clamp(2rem, 4vw, 4rem);
-      border: 2px solid var(--gold-weak);
-      border-radius: 1.25rem;
-      box-shadow: 0 10px 30px rgba(0,0,0,.35);
-      position: relative;
-      background: linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.20));
-    }
-
-    h1 {
-      font-size: clamp(2.25rem, 6vw, 4rem);
-      letter-spacing: 0.06em;
-      margin: 0 0 1rem 0;
-      font-weight: 700;
-    }
-    h2 { font-size: 1.15rem; margin: 1.25rem 0 .4rem; }
-
-    .sep {
-      width: 90%;
-      height: 1px;
-      margin: 1rem auto 1.25rem;
-      background: var(--gold-weak);
-    }
-
-    .contact { font-size: clamp(1rem, 2.6vw, 1.15rem); line-height: 1.7; }
-
-    a { color: var(--gold); text-decoration-color: var(--gold-weak); }
-    a:hover, a:focus { text-decoration: underline; text-underline-offset: 3px; }
-
-    footer {
-      position: fixed;
-      left: 0; right: 0; bottom: 1rem;
-      text-align: center;
-      font-size: .9rem;
-      color: var(--gold-weak);
-    }
-
-    /* Uudet kulmanapit */
-    .corner-btn {
-      position: fixed;
-      bottom: 0.75rem;
-      padding: 0.35rem 0.7rem;
-      border-radius: 999px;
-      font-size: 0.8rem;
-      background: var(--gold-wash);
-      color: var(--gold);
-      border: 1px solid var(--gold-weak);
-      text-decoration: none;
-      box-shadow: 0 2px 6px rgba(0,0,0,.25);
-    }
-    .corner-btn:hover {
-      text-decoration: underline;
-    }
-    .corner-btn-left {
-      left: 0.75rem;
-    }
-    .corner-btn-right {
-      right: 0.75rem;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brunbar - Automaatio ja Taloushallinto</title>
+    <meta name="description" content="Brunbar tarjoaa asiantuntevia teollisuuden automaatioratkaisuja ja luotettavaa taloushallinnon osaamista.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-  <main class="wrap">
-    <section class="card" aria-label="Brunbar yhteystiedot">
-      <h1>BRUNBAR</h1>
-      <div class="sep" role="presentation"></div>
+    <!-- Header navigation -->
+    <header id="navbar">
+        <div class="container nav-content">
+            <a href="#" class="logo">BRUNBAR</a>
+            <nav class="nav-links">
+                <a href="#services">Palvelut</a>
+                <a href="#contact">Yhteystiedot</a>
+            </nav>
+        </div>
+    </header>
 
-      <div class="contact">
-        <h2>Automaatiojärjestelmät ja teollisuuden ratkaisut:</h2>
-        Max Barman<br>
-        <a href="tel:+358449721998">+358 44 972 1998</a><br>
-        <a href="mailto:Max.Barman@brunbar.fi">Max.Barman@brunbar.fi</a>
-      </div>
-
-      <div class="contact">
-        <h2>Taloushallinto-, kirjanpito ja konsultointipalvelut:</h2>
-        Anna Sinkkonen<br>
-        <a href="tel:+358404115802">+358 40 411 5802</a><br>
-        <a href="mailto:Anna.Sinkkonen@brunbar.fi">Anna.Sinkkonen@brunbar.fi</a>
-      </div>
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-background"></div>
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+            <h1 class="hero-title">Ratkaisuja teollisuuteen ja talouteen</h1>
+            <p class="hero-subtitle">Brunbar tarjoaa ensiluokkaista automaatio-osaamista ja luotettavaa taloushallinnon kumppanuutta yrityksesi tueksi.</p>
+            <p class="hero-location"><i class="fa-solid fa-location-dot"></i> Palvelemme asiakkaitamme pääasiassa Pirkanmaalla, mutta tarvittaessa toimimme joustavasti ympäri Suomen.</p>
+            <div class="hero-actions">
+                <a href="#services" class="btn btn-primary">Tutustu palveluihin</a>
+                <a href="#contact" class="btn btn-secondary">Ota yhteyttä</a>
+            </div>
+        </div>
     </section>
-  </main>
 
-  <footer>© <span id="y"></span> Brunbar</footer>
-  <script>document.getElementById('y').textContent = new Date().getFullYear();</script>
+    <!-- Services Section -->
+    <section class="services section" id="services">
+        <div class="container">
+            <div class="section-header">
+                <h2>Palvelumme</h2>
+                <div class="line"></div>
+                <p>Asiantuntijuutta, johon voit luottaa. Kaksi vahvaa tukijalkaa liiketoimintasi menestykselle.</p>
+            </div>
+            
+            <div class="services-grid">
+                <!-- Automation Service -->
+                <div class="service-card automation-card">
+                    <div class="service-image-wrapper">
+                        <img src="automation_bg.png" alt="Teollisuuden automaatio" class="service-bg-image">
+                    </div>
+                    <div class="service-content">
+                        <div class="service-icon">
+                            <i class="fa-solid fa-microchip"></i>
+                        </div>
+                        <h3>Automaatiojärjestelmät & Ratkaisut</h3>
+                        <p>Modernit ja tehokkaat ratkaisut vaativan teollisuuden tarpeisiin. Suunnittelemme, kehitämme ja ylläpidämme automaatiojärjestelmiä, jotka parantavat tuottavuutta ja varmistavat laadun.</p>
+                        <div class="service-contact">
+                            <h4>Yhteyshenkilö</h4>
+                            <p class="name">Max Barman</p>
+                            <a href="tel:+358449721998" class="contact-link"><i class="fa-solid fa-phone"></i> +358 44 972 1998</a>
+                            <a href="mailto:Max.Barman@brunbar.fi" class="contact-link"><i class="fa-solid fa-envelope"></i> Max.Barman@brunbar.fi</a>
+                        </div>
+                    </div>
+                </div>
 
-  <!-- Vasemman alakulman pelinappi -->
-  <a href="gayming.html" class="corner-btn corner-btn-left">Aja rallii</a>
+                <!-- Financial Service -->
+                <div class="service-card finance-card">
+                    <div class="service-image-wrapper">
+                        <img src="finance_bg.png" alt="Taloushallinto ja Konsultointi" class="service-bg-image">
+                    </div>
+                    <div class="service-content">
+                        <div class="service-icon">
+                            <i class="fa-solid fa-chart-pie"></i>
+                        </div>
+                        <h3>Taloushallinto & Konsultointi</h3>
+                        <p>Tarkkaa ja luotettavaa kirjanpitoa sekä asiantuntevaa talouskonsultointia yrityksesi sujuvan arjen ja vakaan kasvun tueksi.</p>
+                        <div class="service-contact">
+                            <h4>Yhteyshenkilö</h4>
+                            <p class="name">Anna Sinkkonen</p>
+                            <a href="tel:+358404115802" class="contact-link"><i class="fa-solid fa-phone"></i> +358 40 411 5802</a>
+                            <a href="mailto:Anna.Sinkkonen@brunbar.fi" class="contact-link"><i class="fa-solid fa-envelope"></i> Anna.Sinkkonen@brunbar.fi</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-  <!-- Oikean alakulman 585.fi-nappi -->
-  <a href="https://585.fi" class="corner-btn corner-btn-right" target="_blank" rel="noopener">Osta korui</a>
+    <!-- Contact & Footer Section -->
+    <footer class="footer" id="contact">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <h2>BRUNBAR</h2>
+                    <p>Luotettava kumppani automaatiossa ja taloushallinnossa.</p>
+                    <p class="location-text">Päätoimialueenamme on Pirkanmaa, mutta palvelemme yrityksiä ympäri Suomen.</p>
+                    <p class="y-tunnus">Y-tunnus: 3403965-9</p>
+                </div>
+                
+                <div class="footer-links">
+                    <h3>Pikalinkit</h3>
+                    <ul>
+                        <li><a href="#home">Etusivu</a></li>
+                        <li><a href="#services">Palvelut</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; <span id="year"></span> Brunbar. Kaikki oikeudet pidätetään.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>
