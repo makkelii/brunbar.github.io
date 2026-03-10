@@ -7,8 +7,8 @@
   --clr-text: #f0f0f4;
   --clr-text-muted: #9aa0a6;
   
-  --clr-accent-1: #00e5ff; /* Automation Blue/Cyan */
-  --clr-accent-2: #ffd700; /* Finance Gold */
+  --clr-accent-1: #00e5ff; /* Automation Cyan */
+  --clr-accent-2: #0077ff; /* Automation Blue */
   
   --font-heading: 'Outfit', sans-serif;
   --font-body: 'Inter', sans-serif;
@@ -200,7 +200,7 @@ header.scrolled {
   width: 100%;
   height: 100%;
   background-image: radial-gradient(circle at 15% 50%, rgba(0, 229, 255, 0.1), transparent 50%),
-                    radial-gradient(circle at 85% 30%, rgba(255, 215, 0, 0.08), transparent 50%);
+                    radial-gradient(circle at 85% 30%, rgba(0, 119, 255, 0.08), transparent 50%);
   z-index: -2;
 }
 
@@ -265,7 +265,7 @@ header.scrolled {
 /* === SERVICES SECTION === */
 .services-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1px));
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 3rem;
   justify-content: center;
 }
@@ -297,9 +297,6 @@ header.scrolled {
   background: var(--clr-accent-1);
 }
 
-.finance-card::before {
-  background: var(--clr-accent-2);
-}
 
 .service-card:hover {
   transform: translateY(-10px);
@@ -351,10 +348,6 @@ header.scrolled {
   box-shadow: 0 0 20px rgba(0, 229, 255, 0.1);
 }
 
-.finance-card .service-icon {
-  color: var(--clr-accent-2);
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
-}
 
 .service-card h3 {
   font-size: 1.6rem;
@@ -405,9 +398,6 @@ header.scrolled {
   color: var(--clr-accent-1);
 }
 
-.finance-card .contact-link:hover {
-  color: var(--clr-accent-2);
-}
 
 /* === FOOTER === */
 .footer {
@@ -516,6 +506,6 @@ header.scrolled {
   }
   
   .nav-links {
-    display: none; /* Add a hamburger menu for full implementation, simplified here */
+    display: none; /* Mobile menu can be added later if needed */
   }
 }
